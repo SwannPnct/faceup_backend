@@ -19,20 +19,23 @@ router.post('/upload', async (req,res) => {
       return
     }
   })
-
-  await cloudinary.uploader.upload(path, (error, response) => {
-    if (error) {
-      fs.unlinkSync(path)
-      res.json({result: false, error: "Issue uploading photo to cloudinary"})
-    } else {
-      fs.unlinkSync(path)
-      res.json({result: true, response})
-    }
-  })
+  try {
+    await cloudinary.uploader.upload(path, (error, response) => {
+      if (error) {
+        fs.unlinkSync(path)
+        res.json({result: false, error: "Issue uploading photo to cloudinary"})
+      } else {
+        fs.unlinkSync(path)
+        res.json({result: true, response})
+      }
+    })
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 router.post('/upload-video', async (req,res) => {
-  const path = './tmp/'+uniqid()+'.mp4'
+  const path = './tmp/'+uniqid()+'.mov'
 
   await req.files.video.mv(path, (err) => {
     if (err) {
