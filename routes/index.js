@@ -31,4 +31,25 @@ router.post('/upload', async (req,res) => {
   })
 })
 
+router.post('/upload-video', async (req,res) => {
+  const path = './tmp/'+uniqid()+'.mp4'
+
+  await req.files.video.mv(path, (err) => {
+    if (err) {
+      res.json({result: false, error: "Issue copying video to /tmp folder"})
+      return
+    }
+  })
+
+  await cloudinary.uploader.upload(path, {resource_type: 'video'}, (error, response) => {
+    if (error) {
+      fs.unlinkSync(path)
+      res.json({result: false, error: "Issue uploading video to cloudinary"})
+    } else {
+      fs.unlinkSync(path)
+      res.json({result: true, response})
+    }
+  })
+})
+
 module.exports = router;
