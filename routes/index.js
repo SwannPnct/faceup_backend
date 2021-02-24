@@ -15,7 +15,6 @@ router.post('/upload', async (req,res) => {
   const path = './tmp/'+uniqid()+'.jpg'
   await req.files.photo.mv(path, (err) => {
     if (err) {
-      fs.unlinkSync(path)
       res.json({result: false, error: "Issue copying photo to /tmp folder"})
       return
     }
