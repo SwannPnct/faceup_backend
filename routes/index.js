@@ -20,7 +20,7 @@ router.post('/upload', async (req,res) => {
       return
     }
   })
- 
+  try {
     await cloudinary.uploader.upload(path, async (error, response) => {
       if (error) {
         fs.unlinkSync(path)
@@ -41,7 +41,7 @@ router.post('/upload', async (req,res) => {
          }
         const rawData = await request('POST', process.env.URI_BASE, options)
         const data = await JSON.parse(rawData.body)
-        
+
         const {gender, age, facialHair, smile, hair} = data[0].faceAttributes
         const faceData = {
           gender,
@@ -54,6 +54,10 @@ router.post('/upload', async (req,res) => {
         res.json({result: true, response, faceData})
       }
     })
+  } catch (error) {
+    console.log("in catch block")
+    console.log(error)
+  }
   
 })
 
